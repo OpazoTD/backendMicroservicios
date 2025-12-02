@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Modelos del Microservicio de Usuarios
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      String   @default("USER") // Para diferenciar "USER" de "ADMINISTRATOR"
+  name      String?  // El signo de pregunta indica que es opcional (nullable)
+  
+  cart      CartItem[]
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  productId Int      // ID del Producto, manejado en Productos MS
+  quantity  Int
+  
+  @@unique([userId, productId]) 
+}

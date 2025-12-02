@@ -1,0 +1,32 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI") 
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client"
+}
+
+// Modelo Factura (Invoice)
+model Invoice {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String    
+  items         InvoiceItem[] 
+  totalAmount   Float
+  status        String    @default("PENDING") 
+ 
+  issueDate     DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@map("facturas_collection")
+  @@index([userId])
+}
+
+type InvoiceItem {
+  productId       Int
+  productName     String
+  quantity        Int
+  priceAtPurchase Float
+}
